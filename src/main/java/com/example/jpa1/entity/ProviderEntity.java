@@ -8,31 +8,24 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "product")
+@Table(name = "provider")
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class ProductEntity extends BaseEntity {
+public class ProviderEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false, columnDefinition = "BIGINT UNSIGNED")
-    private Long number;
+    private Long id;
 
-    @Column(nullable = false, length = 10)
     private String name;
 
-    @Column(nullable = false)
-    private Integer price;
-
-    @Column(nullable = false)
-    private Integer stock;
-
-    @ManyToOne
-    @JoinColumn(name="provider_id")
-    private ProviderEntity providerEntity;
 }
+
+
+
 
 
 

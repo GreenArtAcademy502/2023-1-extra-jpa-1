@@ -29,15 +29,16 @@ class ProductEntityTest {
     }
 
     @Test
-    @Transactional
     public void updProduct() {
-        ProductEntity productEntity = productRep.getReferenceById(1L);
+        //ProductEntity productEntity = productRep.getReferenceById(2L); //지연로딩
+        ProductEntity productEntity = productRep.findById(2L).get(); //즉시로딩
 
         log.info("productEntity : {}", productEntity);
 
-        productEntity.setName("곰사탕");
-        productEntity.setPrice(2000);
+        productEntity.setName("꿈사탕");
+        productEntity.setPrice(3000);
 
-        productRep.save(productEntity);
+        //TODO: 수정 안 되는 이유를 찾아야 함 >> findById를 사용하여 해결, @Transactional 도 필요없음
+        productRep.saveAndFlush(productEntity);
     }
 }

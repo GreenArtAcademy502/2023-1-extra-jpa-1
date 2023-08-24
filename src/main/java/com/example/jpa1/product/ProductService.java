@@ -1,9 +1,14 @@
 package com.example.jpa1.product;
 
+import com.example.jpa1.entity.ProductDetailEntity;
 import com.example.jpa1.entity.ProductEntity;
+import com.example.jpa1.entity.ProviderEntity;
+import com.example.jpa1.product.model.ProductRegDto;
 import com.example.jpa1.product.model.ProductUpdDto;
 import com.example.jpa1.product.model.ProductVo;
+import com.example.jpa1.repository.ProductDetailRepository;
 import com.example.jpa1.repository.ProductRepository;
+import com.example.jpa1.repository.ProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,6 +22,37 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRep;
+    private final ProductDetailRepository productDetailRep;
+    private final ProviderRepository providerRep;
+
+    public ProductVo postProduct(ProductRegDto dto) {
+        ProviderEntity providerEntity = providerRep.findById(dto.getProviderId()).get();
+
+        ProductEntity productEntity = ProductEntity.builder()
+                .stock(dto.getStock())
+                .price(dto.getPrice())
+                .name(dto.getName())
+                .providerEntity(providerEntity)
+                .build();
+
+        productRep.save(productEntity);
+
+        ProductDetailEntity productDetailEntity = ProductDetailEntity.builder()
+                .productEntity(productEntity)
+                .description(dto.getDescription())
+                .build();
+
+        productDetailRep.save(productDetailEntity);
+
+        return ProductVo.builder()
+                .number(productEntity.getNumber())
+                .name(productEntity.getName())
+                .price(productEntity.getPrice())
+                .stock(productEntity.getStock())
+                .providerName(productEntity.getProviderEntity().getName())
+                .description(productDetailEntity.getDescription())
+                .build();
+    }
 
     public List<ProductVo> getProductAll(String name) {
         //List<ProductEntity> list = productRep.findAll(Sort.by(Sort.Order.desc("number")));

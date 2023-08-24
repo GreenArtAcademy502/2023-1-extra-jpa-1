@@ -14,12 +14,12 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode
 public class ProductDetailEntity {
     @Id
-    @Column(name = "product_number")
+    @Column(name = "product_number", updatable = false, nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long number;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "product_number", updatable = false, nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @JoinColumn(name = "product_number")
     private ProductEntity productEntity;
 
     @Column(length = 500)

@@ -29,9 +29,12 @@ public class ProductEntity extends BaseEntity {
     @Column(nullable = false)
     private Integer stock;
 
-    @ManyToOne
+    @ManyToOne(optional = false) //inner join으로 변경된다고 하는데 안 됨
     @JoinColumn(name="provider_id")
     private ProviderEntity providerEntity;
+
+    @OneToOne(mappedBy = "productEntity")
+    private ProductDetailEntity productDetailEntity;
 }
 
 

@@ -10,13 +10,16 @@ import com.example.jpa1.repository.ProductDetailRepository;
 import com.example.jpa1.repository.ProductRepository;
 import com.example.jpa1.repository.ProviderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -25,9 +28,14 @@ public class ProductService {
     private final ProductDetailRepository productDetailRep;
     private final ProviderRepository providerRep;
 
+
     public ProductVo postProduct(ProductRegDto dto) {
         ProviderEntity providerEntity = providerRep.findById(dto.getProviderId()).get();
-
+    /*
+        ProviderEntity providerEntity = ProviderEntity.builder()
+                .id(dto.getProviderId())
+                .build();
+*/
         ProductEntity productEntity = ProductEntity.builder()
                 .stock(dto.getStock())
                 .price(dto.getPrice())
@@ -44,12 +52,15 @@ public class ProductService {
 
         productDetailRep.save(productDetailEntity);
 
+        log.info("productDetail-number : {} ", productDetailEntity.getNumber());
+
         return ProductVo.builder()
                 .number(productEntity.getNumber())
                 .name(productEntity.getName())
                 .price(productEntity.getPrice())
                 .stock(productEntity.getStock())
-                .providerName(productEntity.getProviderEntity().getName())
+                //.providerName(productEntity.getProviderEntity().getName())
+                .providerName(providerEntity.getName())
                 .description(productDetailEntity.getDescription())
                 .build();
     }
@@ -57,13 +68,14 @@ public class ProductService {
     public List<ProductVo> getProductAll(String name) {
         //List<ProductEntity> list = productRep.findAll(Sort.by(Sort.Order.desc("number")));
         List<ProductEntity> list = null;
-
+/*
         if(name == null) {
             list = productRep.findAll(Sort.by(Sort.Direction.DESC, "number"));
         } else {
             list = productRep.findAllByName(name, Sort.by(Sort.Direction.DESC, "number"));
         }
-
+*/
+        list = productRep.selProductList();
         /*
         List<ProductVo> resultList = new ArrayList();
         for(ProductEntity entity : list) {
@@ -81,6 +93,8 @@ public class ProductService {
                                             .name(entity.getName())
                                             .price(entity.getPrice())
                                             .stock(entity.getStock())
+                                            .providerName(entity.getProviderEntity().getName())
+                                            .description(entity.getProductDetailEntity().getDescription())
                                             .build()
         ).toList();
     }
